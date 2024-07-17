@@ -1,20 +1,20 @@
 import { prisma } from "../db.js";
 
 export const getuser = async(req, res) => {
-
     try {
-        const login = await prisma.user.findMany();
-        res.status(200).json(login);
+        const users = await prisma.login.findMany();
+        res.status(200).json(users);
     } catch (error) {
-        res.status(400).json({ error: "Error en el metodo GET", message: error.message });
+        res.status(400).json({ error: "Error al obtener los usuarios", message: error.message });
     }
 };
+
 
 export const createuser = async(req, res) => {
     const { email, password, username } = req.body;
 
     try {
-        const newUser = await prisma.user.create({
+        const newUser = await prisma.login.create({
             data: {
                 email,
                 password,
@@ -27,11 +27,12 @@ export const createuser = async(req, res) => {
     }
 }
 
+
 export const updateuser = async(req, res) => {
-    const userId = parseint(req.params.id);
+    const userId = req.params.id;
     const { email, password, username } = req.body;
     try {
-        const updateuser = await prisma.user.update({
+        const updatedUser = await prisma.login.update({
             where: { id: userId },
             data: {
                 email,
@@ -39,17 +40,17 @@ export const updateuser = async(req, res) => {
                 username,
             },
         });
-        res.json(updateuser);
+        res.json(updatedUser);
     } catch (error) {
+        console.error("Error updating user:", error);
         res.status(500).json({ error: "No se pudo actualizar los datos del usuario" });
-
     }
 };
 
 export const deleteuser = async(req, res) => {
-    const userId = parseint(req.params.id);
+    const userId = req.params.id;
     try {
-        await prisma.user.delete({
+        await prisma.login.delete({
             where: { id: userId },
         });
         res.json({ message: "Usuario eliminado con exito" });
